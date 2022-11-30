@@ -1,0 +1,188 @@
+﻿{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Family",
+    "version": "1.0.0.0"
+  },
+  "paths": {
+    "/family": {
+      "get": {
+        "tags": [
+          "Family"
+        ],
+        "summary": "Возвращает список членов семьи выбранного домохозяйства",
+        "responses": {
+          "200": {
+            "description": "Список членов семьи",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FamilyMemberSummaryDTO"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Нет прав просматривать информацию о домохозяйстве"
+          },
+          "404": {
+            "description": "Домохозяйство не найдено"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Family"
+        ],
+        "summary": "Добавляет нового члена семьи",
+        "requestBody": {
+          "description": "Информация о добавляемом члене семьи",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddFamilyMemberDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Член семьи добавлен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FamilyMemberDTO"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Нет прав добавлять члена семьи"
+          },
+          "404": {
+            "description": "Домохозяйство не найдено"
+          }
+        }
+      }
+    },
+    "/family/{id}": {
+      "get": {
+        "tags": [
+          "Family"
+        ],
+        "summary": "Возвращает информацию о члене семьи",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Идентификатор члена семьи",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Информация о члене семьи",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FamilyMemberDTO"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Нет прав просматривать информацию о члене семьи"
+          },
+          "404": {
+            "description": "Член семьи не найден"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AddFamilyMemberDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Имя"
+          },
+          "isAdult": {
+            "type": "boolean",
+            "description": "Является ли взрослым"
+          },
+          "eMail": {
+            "type": "string",
+            "description": "Почта"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Телефон"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Информация о добавляемом члене семьи"
+      },
+      "FamilyMemberDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Идентификатор",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Имя"
+          },
+          "isAdult": {
+            "type": "boolean",
+            "description": "Является ли взрослым"
+          },
+          "eMail": {
+            "type": "string",
+            "description": "Почта"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Телефон"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Подробная информация о члене семьи"
+      },
+      "FamilyMemberSummaryDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Идентификатор",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Имя"
+          },
+          "isAdult": {
+            "type": "boolean",
+            "description": "Является ли взрослым"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Краткая информация о члене семьи"
+      }
+    }
+  }
+}
