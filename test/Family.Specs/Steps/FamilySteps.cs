@@ -1,7 +1,6 @@
 ﻿using AV.Household.Family.Model;
 using AV.Household.Family.Specs.API;
 using AV.Household.Family.Specs.Drivers;
-using Bogus;
 using FluentAssertions;
 
 namespace AV.Household.Family.Specs.Steps;
@@ -9,12 +8,10 @@ namespace AV.Household.Family.Specs.Steps;
 [Binding]
 public class FamilySteps
 {
-    private static readonly Faker Faker = new Faker("ru");
-
     private readonly FamilyServiceDriver _familyServiceDriver;
     private readonly AuthFakerDriver _authFakerDriver;
 
-    private List<(string Name, bool isAdult)> _givenFamilyMembers = new ();
+    private Dictionary<string, (string Email, string Phone, bool IsAdult)> _givenFamilyMembers = new ();
     private List<FamilyMemberSummaryDTO>? _familyMemberSummaryResult;
 
     public FamilySteps(FamilyServiceDriver familyServiceDriver, AuthFakerDriver authFakerDriver)
@@ -27,17 +24,16 @@ public class FamilySteps
     public async Task GivenFamily(Table membersTable)
     {
         _givenFamilyMembers = membersTable.Rows
-            .Select(row => (Name: row["Name"].Trim(), IsAdult: row["Adult"].Trim() == "да"))
-            .ToList();
+            .ToDictionary(row => row["Name"].Trim(), row=> (Email: row["Email"].Trim(), Phone:row["Phone"].Trim(),  IsAdult: row["Adult"].Trim() == "да"));
         
         var members = _givenFamilyMembers
             .Select(givenMember => new FamilyMember(
                 Guid.NewGuid(),
                 1,
-                givenMember.Name,
-                Faker.Person.Phone,
-                Faker.Person.Email,
-                givenMember.isAdult
+                givenMember.Key,
+                givenMember.Value.Phone,
+                givenMember.Value.Email,
+                givenMember.Value.IsAdult
             ));
         await _familyServiceDriver.InitCollectionAsync(members);
     }
@@ -46,23 +42,23 @@ public class FamilySteps
     public async Task GivenUserLogin(string userName) =>
         await _familyServiceDriver.SetTokenAsync(
             _authFakerDriver.GetBearer(
-                userName,
+                _givenFamilyMembers[userName].Email,
                 1,
-                _givenFamilyMembers.Single(x=>x.Name == userName).isAdult));
+                _givenFamilyMembers[userName].IsAdult));
 
     [When(@"Пользователь получает список членов семьи")]
     public async Task WhenUserGetFamilyMembers() => 
         _familyMemberSummaryResult = await _familyServiceDriver.GetFamilyMembersAsync();
 
-    [When(@"Пользователь добавляет взрослого (.*)")]
-    public async Task WhenUserAddAdult(string name) =>
+    [When(@"Пользователь добавляет взрослого (\w+)\(([\w@.]+),\s([\d,\+]+)\)")]
+    public async Task WhenUserAddAdult(string name, string email, string phone) =>
         await _familyServiceDriver.AddMemberAsync(
-            new AddFamilyMemberDTO(Faker.Person.Email, true, name, Faker.Person.Phone));
+            new AddFamilyMemberDTO(email, true, name, phone));
 
-    [When(@"Пользователь добавляет ребенка (.*)")]
-    public async Task WhenUserAddChild(string name) =>
+    [When(@"Пользователь добавляет ребенка (\w+)\(([\w@.]+),\s([\d,\+]+)\)")]
+    public async Task WhenUserAddChild(string name, string email, string phone) =>
         await _familyServiceDriver.AddMemberAsync(
-            new AddFamilyMemberDTO(Faker.Person.Email, false, name, Faker.Person.Phone));
+            new AddFamilyMemberDTO(email, false, name, phone));
 
     [Then(@"количество элементов в списке членов (.*)")]
     public void ThenFamilyMembersCountIs(int count) =>

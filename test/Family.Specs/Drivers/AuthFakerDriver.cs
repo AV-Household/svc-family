@@ -13,11 +13,11 @@ public class AuthFakerDriver
         SecurityKey = "Pa$$w0rd_Pa$$w0rd_Pa$$w0rd"
     };
 
-    public string GetBearer(string userName, int household, bool isAdult)
+    public string GetBearer(string email, int household, bool isAdult)
     {
-        var subject = new ClaimsIdentity(new Claim[]
+        var subject = new ClaimsIdentity(new[]
         {
-            new Claim(ClaimsIdentity.DefaultNameClaimType, userName),
+            new Claim(ClaimsIdentity.DefaultNameClaimType, email),
             new Claim("Household", household.ToString()),
             new Claim(ClaimsIdentity.DefaultRoleClaimType, isAdult ? "Adult" : "Child")
         });
