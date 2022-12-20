@@ -16,9 +16,8 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="av.household.webserver.extensions" Version="0.2.0-alpha" />
+        <PackageReference Include="av.household.webserver.extensions" Version="0.4.0-alpha" />
         <PackageReference Include="av.household.webserver.testing" Version="0.4.0-alpha" />
-        <PackageReference Include="Bogus" Version="34.0.2" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
         <PackageReference Include="MongoDB.Driver" Version="2.18.0" />
         <PackageReference Include="SpecFlow.Plus.LivingDocPlugin" Version="3.9.57" />

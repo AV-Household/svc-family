@@ -36,8 +36,7 @@ public class FamilyServiceDriver : MicroserviceDriver<FamilyClient,  Program>
                     {"JWT__SecurityKey", "Pa$$w0rd_Pa$$w0rd_Pa$$w0rd"}
                 }));
 
-
-        var connectionString = Database.GetAwaiter().GetResult().ConnectionString;
+        var connectionString = Task.Run(async () => await Database).Result.ConnectionString;
 
         builder.ConfigureServices(services =>
             services.AddSingleton(

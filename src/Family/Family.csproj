@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="av.household.webserver.extensions" Version="0.2.0-alpha" />
+        <PackageReference Include="av.household.webserver.extensions" Version="0.4.0-alpha" />
         <PackageReference Include="Mapster" Version="7.3.0" />
         <PackageReference Include="MongoDB.Driver" Version="2.18.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
